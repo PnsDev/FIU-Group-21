@@ -7,16 +7,14 @@ export default class Book {
     price: number;
     author: string;
     genre: string[];
-    publisher: string;
 
-    private constructor(ISBN: string, name: string, description: string, price: number, author: string, genre: string[], publisher: string) {
+    private constructor(ISBN: string, name: string, description: string, price: number, author: string, genre: string[]) {
         this.ISBN = ISBN;
         this.name = name;
         this.description = description;
         this.price = price;
         this.author = author;
         this.genre = genre;
-        this.publisher = publisher;
     }
 
     /**
@@ -30,9 +28,8 @@ export default class Book {
         if (!JSONBook.hasOwnProperty('price') || typeof JSONBook['price'] !== 'number') return null;
         if (!JSONBook.hasOwnProperty('author') || typeof JSONBook['author'] !== 'string') return null;
         if (!JSONBook.hasOwnProperty('genre') || typeof JSONBook['genre'] !== 'object') return null;
-        if (!JSONBook.hasOwnProperty('publisher') || typeof JSONBook['publisher'] !== 'string') return null;
 
-        return new Book(JSONBook['ISBN'], JSONBook['name'], JSONBook['description'], JSONBook['price'], JSONBook['author'], JSONBook['genre'], JSONBook['publisher']);
+        return new Book(JSONBook['ISBN'], JSONBook['name'], JSONBook['description'], JSONBook['price'], JSONBook['author'], JSONBook['genre']);
     }
 
 
@@ -40,11 +37,11 @@ export default class Book {
      * Gets a book from the database by ISBN
      */
      public static async getBookByISBN(ISBN: string) : Promise<Book | null> { //TODO: maybe clean this up
-        const book : Book = new Book(ISBN, "", "", 0, "", [], "");
+        const book : Book = new Book(ISBN, "", "", 0, "", []);
         const bookInDB = await book.findInDB();
 
         if (bookInDB === null) return null;
-        return new Book(bookInDB.ISBN, bookInDB.name, bookInDB.description, bookInDB.price, bookInDB.author, bookInDB.genre, bookInDB.publisher);
+        return new Book(bookInDB.ISBN, bookInDB.name, bookInDB.description, bookInDB.price, bookInDB.author, bookInDB.genre);
     }
 
 
@@ -71,13 +68,28 @@ export default class Book {
         book.name = this.name;
         book.description = this.description;
         book.price = this.price;
-        book.author = this.author;
+        book.author = this.author; //TODO: validate author 
         book.genre = this.genre;
-        book.publisher = this.publisher; //TODO: validate author and plublisher
 
         // Save the book
         try {
             await book.save(); //todo error handling through callback
+            return true;
+        } catch (ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Deletes the book from the database
+     * @returns the book as a JSON object
+     */
+    public async delete() : Promise<boolean> {
+        const book = await this.findInDB();
+        if (book === null) return false;
+
+        try {
+            await book.delete();
             return true;
         } catch (ex) {
             return false;
