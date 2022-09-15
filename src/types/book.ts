@@ -37,6 +37,18 @@ export default class Book {
 
 
     /**
+     * Gets a book from the database by ISBN
+     */
+     public static async getBookByISBN(ISBN: string) : Promise<Book | null> { //TODO: maybe clean this up
+        const book : Book = new Book(ISBN, "", "", 0, "", [], "");
+        const bookInDB = await book.findInDB();
+
+        if (bookInDB === null) return null;
+        return new Book(bookInDB.ISBN, bookInDB.name, bookInDB.description, bookInDB.price, bookInDB.author, bookInDB.genre, bookInDB.publisher);
+    }
+
+
+    /**
      * Checks if the book exists in the database
      */
     public async inDatabase() : Promise<boolean> {
@@ -85,7 +97,4 @@ export default class Book {
             });
         });
     }
-
-
-
 }
