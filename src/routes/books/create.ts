@@ -18,6 +18,8 @@ async function reqHandler(req: Request, res: Response) : Promise<any> {
     if (await book.inDatabase())
         return res.status(400).send(response(false, 'Book already exists. Try updating it instead.'));
 
+    // TODO: Check valid author ID
+
     // Save the book
     if (await book.save()) return res.status(200).send(response(true, 'Book saved'));
     return res.status(500).send(response(false, 'Internal server error'));
