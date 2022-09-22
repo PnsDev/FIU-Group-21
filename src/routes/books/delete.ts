@@ -5,23 +5,19 @@ import response from "../../utils/response";
 import Book from "../../types/book";
 
 async function reqHandler(req: Request, res: Response) : Promise<any> {
-    
-    // TODO: some sort of AUTH header check here
+
     if (req.headers.authorization === undefined || !authChecker(req.headers.authorization)) 
         return res.status(401).send(response(false, 'Invalid authorization header'));
-    
-    // Make a valid book object
-    const book = Book.fromJSON(req.body);
+
+    if (req.query.ISBN === undefined) 
+        return res.status(400).send(response(false, 'ISBN not provided'));
+
+    const book = await Book.getBookByISBN(req.query.ISBN as string);
     if (book === null)
-        return res.status(400).send(response(false, 'Invalid book provided'));
+        return res.status(400).send(response(false, 'No match found for ISBN'));
 
-    if (await book.inDatabase())
-        return res.status(400).send(response(false, 'Book already exists. Try updating it instead.'));
-
-    // TODO: Check valid author ID
-
-    // Save the book
-    if (await book.save()) return res.status(200).send(response(true, 'Book saved'));
+    // Delete the book
+    if (await book.delete()) return res.status(200).send(response(true, 'Book deleted'));
     return res.status(500).send(response(false, 'Internal server error'));
 };
 
