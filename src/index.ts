@@ -13,7 +13,7 @@ async function startServer() {
      * Entry point for the application
      */
     expressApp = express();
-    mongooseDb = await mongoose.connect(`mongodb://${process.env.DB_USER !== undefined ? `${process.env.DB_USER}:${process.env.DB_PASSWORD}@` : ''}${process.env.DB_HOST}:${process.env.DB_PORT}/bookstore`);
+    mongooseDb = await mongoose.connect(`mongodb+srv://${process.env.DB_USER !== undefined ? `${process.env.DB_USER}:${process.env.DB_PASSWORD}@` : ''}${process.env.DB_HOST}/bookstore`);
 
     expressApp.use(express.json()); // Parse JSON bodies
 
