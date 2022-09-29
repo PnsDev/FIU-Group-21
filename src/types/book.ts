@@ -82,7 +82,7 @@ export default class Book {
 
     /**
      * Deletes the book from the database
-     * @returns the book as a JSON object
+     * @returns true if successful, false if not
      */
     public async delete() : Promise<boolean> {
         const book = await this.findInDB();
