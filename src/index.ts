@@ -2,6 +2,7 @@ import 'dotenv/config'
 
 import express from 'express';
 import mongoose from 'mongoose';
+import chalk from "chalk";
 
 import iterateDir from "./utils/folderDir";
 import response from './utils/response';
@@ -26,26 +27,33 @@ async function startServer() {
      * in the default export of the route file
      */
     iterateDir(__dirname + '/routes').forEach((path: String) => {
-        const route: Function | undefined = require(path + '').default;
-        if (route === undefined) return;
-
         // Create pretty name for the route
         const pathName: string = (path + '').replace(__dirname, '').replace('routes/', '').split('.')[0];
+        console.log('');
+        process.stdout.write(`[${chalk.yellowBright('LOAD')}] Loading API route: ${pathName}`);
 
-        console.log('Loading API route: ' + pathName);
         try {
-            expressApp.get(`${pathName}/`, async (req: express.Request, res: express.Response) => { 
+            // Import the route file
+            const route: Function | undefined = require(path + '').default;
+            if (route === undefined) return process.stdout.write(`\r[${chalk.blueBright('SKIP')}] Skipped API route: ${pathName}`);
+
+            // Create the route event and bind the request handler
+            expressApp.get(`${pathName}/`, async (req: express.Request, res: express.Response) => {
                 try {
                     await route(req, res);
                 } catch (err) {
-                    console.log(err);
                     res.status(500).send(response(false, 'Internal server error'));
+                    console.log(chalk.redBright('Error occured while handling request:\n') + err);
                 }
                 res.end();
-             });
+            });
+
+            // Log success
+            process.stdout.write(`\r[${chalk.greenBright('OK')}] Loaded API route: ${pathName}                      `);
         } catch (ex) {
-            console.log('Error loading route: ' + pathName);
-            console.log(ex);
+            // Log failure
+            process.stdout.write(`\r[${chalk.redBright('ERR')}] Failed to load API route: ${pathName}               `);
+            console.log('\n' + ex);
         }
     });
 
@@ -54,7 +62,7 @@ async function startServer() {
      * Start the API
      */
     expressApp.listen(process.env.API_PORT, () => {
-        console.log('API running on port ' + process.env.API_PORT);
+        console.log(`\nAPI Status: ${chalk.greenBright('Running')}\n`);
     });
 }
 
