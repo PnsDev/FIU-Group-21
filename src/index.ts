@@ -28,7 +28,7 @@ async function startServer() {
      */
     iterateDir(__dirname + '/routes').forEach((path: String) => {
         // Create pretty name for the route
-        const pathName: string = (path + '').replace(__dirname, '').replace('\\routes', '').replaceAll('\\', '/').split('.')[0] + '/';
+        const pathName: string = (path + '').replace(__dirname, '').replace('\\routes', '').replace('routes/', '').replaceAll('\\', '/').split('.')[0] + '/';
         console.log('');
         process.stdout.write(`[${chalk.yellowBright('LOAD')}] Loading API route: ${pathName}`);
 
