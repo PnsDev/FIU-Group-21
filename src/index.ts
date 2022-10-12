@@ -28,7 +28,7 @@ async function startServer() {
      */
     iterateDir(__dirname + '/routes').forEach((path: String) => {
         // Create pretty name for the route
-        const pathName: string = (path + '').replace(__dirname, '').replace('routes/', '').split('.')[0];
+        const pathName: string = (path + '').replace(__dirname, '').replace('\\routes', '').replaceAll('\\', '/').split('.')[0] + '/';
         console.log('');
         process.stdout.write(`[${chalk.yellowBright('LOAD')}] Loading API route: ${pathName}`);
 
@@ -38,7 +38,7 @@ async function startServer() {
             if (route === undefined) return process.stdout.write(`\r[${chalk.blueBright('SKIP')}] Skipped API route: ${pathName}`);
 
             // Create the route event and bind the request handler
-            expressApp.get(`${pathName}/`, async (req: express.Request, res: express.Response) => {
+            expressApp.get(`${pathName}`, async (req: express.Request, res: express.Response) => {
                 try {
                     await route(req, res);
                 } catch (err) {
