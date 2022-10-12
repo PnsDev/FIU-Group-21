@@ -4,6 +4,7 @@
     "compilerOptions": {
         "outDir": "dist",
         "removeComments": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "esModuleInterop": true
     }
 }

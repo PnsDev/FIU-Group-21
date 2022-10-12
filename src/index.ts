@@ -2,7 +2,7 @@ import 'dotenv/config'
 
 import express from 'express';
 import mongoose from 'mongoose';
-import chalk from "chalk";
+import chalk from 'chalk';
 
 import iterateDir from "./utils/folderDir";
 import response from './utils/response';
