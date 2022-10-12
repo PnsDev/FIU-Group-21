@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import iterateDir from "./utils/folderDir";
+import response from './utils/response';
 
 let expressApp: express.Application;
 let mongooseDb: mongoose.Mongoose;
@@ -24,16 +25,26 @@ async function startServer() {
      * application and will call the request handler function stored
      * in the default export of the route file
      */
-    iterateDir('src/routes').forEach((path: String) => {
-        const route: Function = require('./routes' + path + '.ts').default;
-        console.log('Loading API route: ' + path);
+    iterateDir(__dirname + '/routes').forEach((path: String) => {
+        const route: Function | undefined = require(path + '').default;
+        if (route === undefined) return;
+
+        // Create pretty name for the route
+        const pathName: string = (path + '').replace(__dirname, '').replace('routes/', '').split('.')[0];
+
+        console.log('Loading API route: ' + pathName);
         try {
-            expressApp.get(`${path}/`, async (req: express.Request, res: express.Response) => { 
-                await route(req, res);
+            expressApp.get(`${pathName}/`, async (req: express.Request, res: express.Response) => { 
+                try {
+                    await route(req, res);
+                } catch (err) {
+                    console.log(err);
+                    res.status(500).send(response(false, 'Internal server error'));
+                }
                 res.end();
              });
         } catch (ex) {
-            console.log('Error loading route: ' + path);
+            console.log('Error loading route: ' + pathName);
             console.log(ex);
         }
     });
