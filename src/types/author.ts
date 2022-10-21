@@ -30,12 +30,10 @@ export default class Author {
         return new Author(JSONAuthor['id'], JSONAuthor['first'], JSONAuthor['last'], JSONAuthor['biography'], JSONAuthor['publisher']);
     }
 
-    /**
-     * Checks if the author exists in the database
-     */
-    public async inDatabase() : Promise<boolean> {
-        let author = await this.findInDB();
-        return author !== null;
+    public static async fromID(id: String): Promise<Author | null> {
+        let temp = await (new Author(id, 'a', 'a', 'a', 'a')).findInDB();
+        if (temp === null) return null;
+        return new Author(temp.id, temp.name.first, temp.name.last, temp.biography, temp.publisher);
     }
 
     /**
@@ -50,8 +48,8 @@ export default class Author {
 
         // Update the author
         author.id = this.id
-        author.first = this.first;
-        author.last = this.last;
+        author.name.first = this.first;
+        author.name.last = this.last;
         author.biography = this.biography;
         author.publisher = this.publisher;
         
@@ -78,6 +76,23 @@ export default class Author {
         } catch (ex) {
             return false;
         }
+    }
+
+    // finds dupe in db based off name and stuff like that
+    public async isAlreadyInDB() : Promise<boolean> {
+        return new Promise((resolve) => {
+            authors.findOne({
+                name: {
+                    first: this.first,
+                    last: this.last
+                },
+                biography: this.biography,
+                publisher: this.publisher
+            }, (err: any, book: any) => {
+                if (err) resolve(false);
+                return resolve(book !== null);
+            });
+        });
     }
 
 

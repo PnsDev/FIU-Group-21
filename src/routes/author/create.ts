@@ -15,15 +15,14 @@ async function reqHandler(req: Request, res: Response) : Promise<any> {
     // Generate a random ID for the author (or overwrite the one provided)
     tempAuthor.id = randomUUID();
 
-    //TODO: check for identical authors (same name, same publisher, same biography)
-
     // Make a valid book object
     const author : Author | null = Author.fromJSON(tempAuthor);
 
-    if (author === null)
-        return res.status(400).send(response(false, 'Invalid book provided'));
-    
-    //TODO: check for identical authors (same name, same publisher, same biography)
+    if (author === null) // Valid author body
+        return res.status(400).send(response(false, 'Invalid author provided'));
+
+    if (await author.isAlreadyInDB()) // Make sure there are no dupes
+        return res.status(400).send(response(false, 'Author has already been saved'));
 
     // Save the book
     if (await author.save()) return res.status(200).send(JSON.stringify(
@@ -35,3 +34,5 @@ async function reqHandler(req: Request, res: Response) : Promise<any> {
     ));
     return res.status(500).send(response(false, 'Internal server error'));
 };
+
+export default reqHandler;
