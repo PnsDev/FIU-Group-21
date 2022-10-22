@@ -4,19 +4,16 @@ import Author from "../../types/author";
 import authChecker from "../../utils/authChecker";
 import response from "../../utils/response";
 
-async function reqHandler(req: Request, res: Response) : Promise<any> {
+export default async function(req: Request, res: Response) : Promise<any> {
         
-    // TODO: some sort of AUTH header check here
     if (req.headers.authorization === undefined || !authChecker(req.headers.authorization)) 
         return res.status(401).send(response(false, 'Invalid authorization header'));
 
-    let tempAuthor = req.body;
-
     // Generate a random ID for the author (or overwrite the one provided)
-    tempAuthor.id = randomUUID();
+    req.body.id = randomUUID();
 
     // Make a valid book object
-    const author : Author | null = Author.fromJSON(tempAuthor);
+    const author : Author | null = Author.fromJSON(req.body);
 
     if (author === null) // Valid author body
         return res.status(400).send(response(false, 'Invalid author provided'));
@@ -34,5 +31,3 @@ async function reqHandler(req: Request, res: Response) : Promise<any> {
     ));
     return res.status(500).send(response(false, 'Internal server error'));
 };
-
-export default reqHandler;
