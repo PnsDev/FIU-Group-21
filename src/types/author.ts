@@ -1,4 +1,5 @@
 import authors from "../mongoDB/schemas/author";
+import {validateObjectValues} from "../utils/classUtils";
 
 export default class Author {
     id: String;
@@ -6,6 +7,15 @@ export default class Author {
     last: String; // last name
     biography: String;
     publisher: String;
+
+    // Used for validation
+    private static fields: Map<string, string> = new Map([
+        ['id', 'string'],
+        ['first', 'string'],
+        ['last', 'string'],
+        ['biography', 'string'],
+        ['publisher', 'string']
+    ]);
 
 
     private constructor (id: String, first: String, last: String, biography: String, publisher: String) {
@@ -20,12 +30,8 @@ export default class Author {
      * Create author with a valid provided Object
      */
     public static fromJSON(JSONAuthor: any) : Author | null {
-        // TODO: kinda messy, maybe make a better way to do this
-        if (!JSONAuthor.hasOwnProperty('id') || typeof JSONAuthor['id'] !== 'string') return null;
-        if (!JSONAuthor.hasOwnProperty('first') || typeof JSONAuthor['first'] !== 'string') return null;
-        if (!JSONAuthor.hasOwnProperty('last') || typeof JSONAuthor['last'] !== 'string') return null;
-        if (!JSONAuthor.hasOwnProperty('biography') || typeof JSONAuthor['biography'] !== 'string') return null;
-        if (!JSONAuthor.hasOwnProperty('publisher') || typeof JSONAuthor['publisher'] !== 'string') return null;
+        // loop thru map and make sure all fields were provided
+        if (!validateObjectValues(JSONAuthor, this.fields)) return null;
 
         return new Author(JSONAuthor['id'], JSONAuthor['first'], JSONAuthor['last'], JSONAuthor['biography'], JSONAuthor['publisher']);
     }
