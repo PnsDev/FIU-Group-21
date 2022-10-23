@@ -12,7 +12,7 @@ export default async function(req: Request, res: Response) : Promise<any> {
     // Generate a random ID for the author (or overwrite the one provided)
     req.body.id = randomUUID();
 
-    // Make a valid book object
+    // Make a valid author object
     const author : Author | null = Author.fromJSON(req.body);
 
     if (author === null) // Valid author body
@@ -21,7 +21,7 @@ export default async function(req: Request, res: Response) : Promise<any> {
     if (await author.isAlreadyInDB()) // Make sure there are no dupes
         return res.status(400).send(response(false, 'Author has already been saved'));
 
-    // Save the book
+    // Save the author
     if (await author.save()) return res.status(200).send(JSON.stringify(
         {
             successful: true,
