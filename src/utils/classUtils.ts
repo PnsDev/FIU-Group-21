@@ -5,3 +5,7 @@ export function validateObjectValues(obj: any, validator: Map<string, string>): 
     }
     return true;
 }
+
+export function isEmpty(obj: Object): boolean {
+    return Object.keys(obj).length === 0;
+}
