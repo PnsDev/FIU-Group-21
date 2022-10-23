@@ -25,4 +25,7 @@ export default async function(req: Request, res: Response): Promise<any> {
         if (Author.fields.get(key) === undefined) continue;
         Object.defineProperties(author, req.body[key]);
     }
+
+    if (await author.save()) return res.status(200).send(response(true, 'Author updated succesfully'));
+    return res.status(500).send(response(false, 'Internal server error'));
 };
