@@ -21,7 +21,7 @@ export default async function(req: Request, res: Response): Promise<any> {
     // Loop through the body and update the book
     for (const key in req.body) {
         if (Book.fields.get(key) === undefined) continue;
-        Object.defineProperties(book, req.body[key]);
+        book[key] = req.body[key];
     }
     
     if (await book.save()) return res.status(200).send(response(true, 'Book updated succesfully'));
