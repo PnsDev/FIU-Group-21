@@ -8,6 +8,7 @@ export default class Book {
     price: number;
     author: string;
     genre: string[];
+    [key: string]: any;
 
     static readonly fields: Map<string, string> = new Map([
         ['ISBN', 'string'],

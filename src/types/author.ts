@@ -8,6 +8,8 @@ export default class Author {
     biography: String;
     publisher: String;
 
+    [key: string]: any;
+
     // Used for validation
     static readonly fields: Map<string, string> = new Map([
         ['id', 'string'],
