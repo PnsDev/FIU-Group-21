@@ -9,7 +9,7 @@ export default class Book {
     author: string;
     genre: string[];
 
-    private static fields: Map<string, string> = new Map([
+    static readonly fields: Map<string, string> = new Map([
         ['ISBN', 'string'],
         ['name', 'string'],
         ['description', 'string'],

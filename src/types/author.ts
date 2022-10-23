@@ -9,7 +9,7 @@ export default class Author {
     publisher: String;
 
     // Used for validation
-    private static fields: Map<string, string> = new Map([
+    static readonly fields: Map<string, string> = new Map([
         ['id', 'string'],
         ['first', 'string'],
         ['last', 'string'],
