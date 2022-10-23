@@ -5,7 +5,7 @@ import response from "../../utils/response";
 import Book from "../../types/book";
 import Author from "../../types/author";
 
-async function reqHandler(req: Request, res: Response) : Promise<any> {
+export default async function(req: Request, res: Response) : Promise<any> {
     
     if (req.headers.authorization === undefined || !authChecker(req.headers.authorization)) 
         return res.status(401).send(response(false, 'Invalid authorization header'));
@@ -25,5 +25,3 @@ async function reqHandler(req: Request, res: Response) : Promise<any> {
     if (await book.save()) return res.status(200).send(response(true, 'Book saved'));
     return res.status(500).send(response(false, 'Internal server error'));
 };
-
-export default reqHandler;

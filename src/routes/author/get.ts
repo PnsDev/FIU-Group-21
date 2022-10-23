@@ -4,7 +4,7 @@ import getAllBooksByAuthorID from "../../utils/authorUtils";
 import Author from "../../types/author";
 import Book from "../../types/book";
 
-async function reqHandler(req: Request, res: Response) : Promise<any> {
+export default async function(req: Request, res: Response) : Promise<any> {
     if (req.query.ID === undefined) return res.status(400).send(response(false, 'Author ID not provided'));
     
     const author = await Author.fromID(req.query.ID as string);
@@ -23,5 +23,3 @@ async function reqHandler(req: Request, res: Response) : Promise<any> {
         }))
     }));
 };
-
-export default reqHandler;
