@@ -7,7 +7,7 @@ import Author from "../../types/author";
 
 export default async function(req: Request, res: Response) : Promise<any> {
     
-    if (req.headers.authorization === undefined || !authChecker(req.headers.authorization)) 
+    if (req.headers.authorization === undefined || await !authChecker(req.headers.authorization)) 
         return res.status(401).send(response(false, 'Invalid authorization header'));
     
     // Make a valid book object

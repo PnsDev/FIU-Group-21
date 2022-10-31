@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 const {Schema} = mongoose;
 
 const userProfile = new Schema({
-
     username: String,
     password: String,
+    token: String,
     name: String,
     email: String,
     address: String, 
