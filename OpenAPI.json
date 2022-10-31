@@ -1,195 +1,307 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "version": "1.0.0",
-    "title": "Bookstore API",
-    "description": "Internal API to handle a book store client"
+      "version": "1.0.0",
+      "title": "Bookstore API",
+      "description": "Internal API to handle a book store client"
   },
-  "paths": {
-    "/books/create": {
-      "get": {
-        "summary": "Create a new book",
-        "operationId": "createBook",
-        "tags": [
-          "Books"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          }
-        ],
-        "requestBody": {
-          "description": "The book to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Book"
-              },
-              "examples": {
-                "book": {
-                  "summary": "An example of a book",
-                  "value": {
-                    "ISBN": "0446310786",
-                    "name": "To Kill a Mockingbird",
-                    "description": "A bildungsroman, or coming-of-age story, and chronicles the childhood of Scout and Jem Finch as their father Atticus defends a Black man falsely accused of rape.",
-                    "price": 9.95,
-                    "author": "d318ac79-5008-4092-ab1e-eff00b65d17a",
-                    "genre": ["Thriller", "Bildungsroman", "Southern Gothic"]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Book was successfuly saved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BasicResponse"
-                },
-                "examples": {
-                  "response": {
-                    "summary": "A successful response",
-                    "value": {
-                      "successful": true,
-                      "message": "Book saved"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Body is not valid or Book already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BasicResponse"
-                },
-                "examples": {
-                  "response": {
-                    "summary": "A unsuccessful response",
-                    "value": {
-                      "successful": false,
-                      "message": "Invalid book provided"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid authorization header",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BasicResponse"
-                },
-                "examples": {
-                  "response": {
-                    "summary": "A unsuccessful response",
-                    "value": {
-                      "successful": false,
-                      "message": "Invalid authorization header"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BasicResponse"
-                },
-                "examples": {
-                  "response": {
-                    "summary": "A unsuccessful response",
-                    "value": {
-                      "successful": false,
-                      "message": "Internal server error"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+  "servers": [
+      {
+          "url": "https://localhost:3000"
       }
-    }
+  ],
+  "paths": {
+      "/books/create": {
+          "post": {
+              "summary": "Create a new book",
+              "operationId": "createBook",
+              "tags": [
+                  "Books"
+              ],
+              "security": [
+                  {
+                      "UserToken": []
+                  }
+              ],
+              "requestBody": {
+                  "description": "The book to add to the store",
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/Book"
+                          },
+                          "examples": {
+                              "book": {
+                                  "summary": "An example of a book",
+                                  "value": {
+                                      "ISBN": "0446310786",
+                                      "name": "To Kill a Mockingbird",
+                                      "description": "A bildungsroman, or coming-of-age story, and chronicles the childhood of Scout and Jem Finch as their father Atticus defends a Black man falsely accused of rape.",
+                                      "price": 9.95,
+                                      "author": "d318ac79-5008-4092-ab1e-eff00b65d17a",
+                                      "genre": [
+                                          "Thriller",
+                                          "Bildungsroman",
+                                          "Southern Gothic"
+                                      ]
+                                  }
+                              }
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "200": {
+                      "description": "Book was successfuly saved",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/BasicResponse"
+                              },
+                              "examples": {
+                                  "response": {
+                                      "summary": "A successful response",
+                                      "value": {
+                                          "successful": true,
+                                          "message": "Book saved"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Body is not valid or Book already exists",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/BasicResponse"
+                              },
+                              "examples": {
+                                  "response": {
+                                      "summary": "A unsuccessful response",
+                                      "value": {
+                                          "successful": false,
+                                          "message": "Invalid book provided"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Invalid authorization header",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/BasicResponse"
+                              },
+                              "examples": {
+                                  "response": {
+                                      "summary": "A unsuccessful response",
+                                      "value": {
+                                          "successful": false,
+                                          "message": "Invalid authorization header"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "500": {
+                      "description": "Internal server error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/BasicResponse"
+                              },
+                              "examples": {
+                                  "response": {
+                                      "summary": "A unsuccessful response",
+                                      "value": {
+                                          "successful": false,
+                                          "message": "Internal server error"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/books/delete/{ISBN}": {
+          "delete": {
+              "summary": "Delete a book",
+              "operationId": "deleteBook",
+              "tags": [
+                  "Books"
+              ],
+              "parameters": [
+                  {
+                      "name": "ISBN",
+                      "in": "path",
+                      "description": "The unique identifier of a book",
+                      "required": true,
+                      "schema": {
+                          "$ref": "#/components/schemas/BasicResponse"
+                      }
+                  }
+              ],
+              "security": [
+                  {
+                      "UserToken": []
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Book was successfuly deleted",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/BasicResponse"
+                              },
+                              "examples": {
+                                  "response": {
+                                      "summary": "A successful response",
+                                      "value": {
+                                          "successful": true,
+                                          "message": "Book deleted"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "ISBN not provided or ISBN does not exist",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/BasicResponse"
+                              },
+                              "examples": {
+                                  "response": {
+                                      "summary": "A unsuccessful response",
+                                      "value": {
+                                          "successful": false,
+                                          "message": "No match found for ISBN"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Invalid authorization header",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/BasicResponse"
+                              },
+                              "examples": {
+                                  "response": {
+                                      "summary": "A unsuccessful response",
+                                      "value": {
+                                          "successful": false,
+                                          "message": "Invalid authorization header"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "500": {
+                      "description": "Internal server error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/BasicResponse"
+                              },
+                              "examples": {
+                                  "response": {
+                                      "summary": "A unsuccessful response",
+                                      "value": {
+                                          "successful": false,
+                                          "message": "Internal server error"
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
   },
   "components": {
-    "schemas": {
-      "ISBN": {
-        "description": "The unique identifier of a book",
-        "type": "string"
-      },
-      "AuthorID": {
-        "description": "The unique identifier of an author",
-        "type": "string"
-      },
-      "Spacecraft": {
-        "type": "object",
-        "required": [
-          "ISBN",
-          "name",
-          "description",
-          "price",
-          "author",
-          "genre"
-        ],
-        "properties": {
+      "schemas": {
           "ISBN": {
-            "$ref": "#/components/schemas/ISBN"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number"
-          },
-          "author": {
-            "$ref": "#/components/schemas/AuthorID"
-          },
-          "genre": {
-            "type": "array",
-            "items": {
+              "description": "The unique identifier of a book",
               "type": "string"
-            }
-          }
-        }
-      },
-      "BasicResponse": {
-        "type": "object",
-        "required": [
-          "success",
-          "message"
-        ],
-        "properties": {
-          "success": {
-            "description": "If the interaction was successful",
-            "type": "boolean"
           },
-          "message": {
-            "description": "A human readable error message",
-            "type": "string"
+          "AuthorID": {
+              "description": "The unique identifier of an author",
+              "type": "string"
+          },
+          "Book": {
+              "type": "object",
+              "required": [
+                  "ISBN",
+                  "name",
+                  "description",
+                  "price",
+                  "author",
+                  "genre"
+              ],
+              "properties": {
+                  "ISBN": {
+                      "$ref": "#/components/schemas/ISBN"
+                  },
+                  "name": {
+                      "type": "string"
+                  },
+                  "description": {
+                      "type": "string"
+                  },
+                  "price": {
+                      "type": "number"
+                  },
+                  "author": {
+                      "$ref": "#/components/schemas/AuthorID"
+                  },
+                  "genre": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      }
+                  }
+              }
+          },
+          "BasicResponse": {
+              "type": "object",
+              "required": [
+                  "success",
+                  "message"
+              ],
+              "properties": {
+                  "success": {
+                      "description": "If the interaction was successful",
+                      "type": "boolean"
+                  },
+                  "message": {
+                      "description": "A human readable error message",
+                      "type": "string"
+                  }
+              }
           }
-        }
+      },
+      "securitySchemes": {
+          "UserToken": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "Authorization"
+          }
       }
-    },
-    "securitySchemes": {
-      "UserToken": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "Authorization"
-      }
-    }
   }
 }
