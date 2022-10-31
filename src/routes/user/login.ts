@@ -1,33 +1,29 @@
 import { randomUUID } from "crypto";
 import { Request, Response } from "express";
 import Author from "../../types/author";
+import User from "../../types/user";
 import authChecker from "../../utils/authChecker";
 import response from "../../utils/response";
 
 export default async function(req: Request, res: Response) : Promise<any> {
-        
-    if (req.headers.authorization === undefined || !authChecker(req.headers.authorization)) 
-        return res.status(401).send(response(false, 'Invalid authorization header'));
-
-    // Generate a random ID for the author (or overwrite the one provided)
-    req.body.id = randomUUID();
-
-    // Make a valid author object
-    const author : Author | null = Author.fromJSON(req.body);
-
-    if (author === null) // Valid author body
-        return res.status(400).send(response(false, 'Invalid author provided'));
-
-    if (await author.isAlreadyInDB()) // Make sure there are no dupes
-        return res.status(400).send(response(false, 'Author has already been saved'));
+    
+    // get username and pass from the request body
+    // find the user in the database based on the password and username
+    // if the user is found then generate a token and send it back to the user
+    /**
+     * {
+     *    successful: true,
+     *    token: "token"
+     * }
+     */
 
     // Save the author
-    if (await author.save()) return res.status(200).send(JSON.stringify(
-        {
-            successful: true,
-            message: 'Author has been saved',
-            authorId: author.id,
-        }
-    ));
+
+
+    let user = await User.fromUserAndPass(req.body.username, req.body.password);
+
+    user.save();
+    
+
     return res.status(500).send(response(false, 'Internal server error'));
 };
