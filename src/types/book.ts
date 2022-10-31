@@ -1,4 +1,5 @@
 import books from "../mongoDB/schemas/books";
+import {validateObjectValues} from "../utils/classUtils";
 
 export default class Book {
     ISBN: string;
@@ -7,6 +8,16 @@ export default class Book {
     price: number;
     author: string;
     genre: string[];
+    [key: string]: any;
+
+    static readonly fields: Map<string, string> = new Map([
+        ['ISBN', 'string'],
+        ['name', 'string'],
+        ['description', 'string'],
+        ['price', 'number'],
+        ['author', 'string'],
+        ['genre', 'object']
+    ]);
 
     private constructor(ISBN: string, name: string, description: string, price: number, author: string, genre: string[]) {
         this.ISBN = ISBN;
@@ -21,13 +32,8 @@ export default class Book {
      * Create book with a valid provided Object
      */
     public static fromJSON(JSONBook: any) : Book | null {
-        // TODO: kinda messy, maybe make a better way to do this
-        if (!JSONBook.hasOwnProperty('ISBN') || typeof JSONBook['ISBN'] !== 'string') return null;
-        if (!JSONBook.hasOwnProperty('name') || typeof JSONBook['name'] !== 'string') return null;
-        if (!JSONBook.hasOwnProperty('description') || typeof JSONBook['description'] !== 'string') return null;
-        if (!JSONBook.hasOwnProperty('price') || typeof JSONBook['price'] !== 'number') return null;
-        if (!JSONBook.hasOwnProperty('author') || typeof JSONBook['author'] !== 'string') return null;
-        if (!JSONBook.hasOwnProperty('genre') || typeof JSONBook['genre'] !== 'object') return null;
+        if (!validateObjectValues(JSONBook, this.fields)) return null;
+        if (!Array.isArray(JSONBook.genre)) return null;
 
         return new Book(JSONBook['ISBN'], JSONBook['name'], JSONBook['description'], JSONBook['price'], JSONBook['author'], JSONBook['genre']);
     }
@@ -82,7 +88,7 @@ export default class Book {
 
     /**
      * Deletes the book from the database
-     * @returns the book as a JSON object
+     * @returns true if successful, false if not
      */
     public async delete() : Promise<boolean> {
         const book = await this.findInDB();

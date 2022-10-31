@@ -3,7 +3,7 @@ import response from "../../utils/response";
 
 import Book from "../../types/book";
 
-async function reqHandler(req: Request, res: Response) : Promise<any> {
+export default async function(req: Request, res: Response) : Promise<any> {
 
     if (req.query.ISBN === undefined) return res.status(400).send(response(false, 'ISBN not provided'));
     const ISBN = req.query.ISBN as string;
@@ -20,5 +20,3 @@ async function reqHandler(req: Request, res: Response) : Promise<any> {
 
     return res.status(200).send(JSON.stringify(result));
 };
-
-export default reqHandler;
