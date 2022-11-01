@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import WishlistItem from "./wishListItem";
+import wishlist from "./wishlist";
 
 const userProfile = new mongoose.Schema({ 
     username: String,
@@ -9,7 +9,7 @@ const userProfile = new mongoose.Schema({
     address: String, 
     token: String,
     admin: Boolean,
-    wishlist: [WishlistItem]
+    wishlists: [wishlist]
 });
 
 export default mongoose.model("user", userProfile);

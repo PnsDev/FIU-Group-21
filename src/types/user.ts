@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import users from "../mongoDB/schemas/users";
+import { Wishlist } from "../mongoDB/schemas/wishlist";
 import Book from "./book";
 
 export default class User {
@@ -10,7 +11,7 @@ export default class User {
     address: string;
     admin: boolean = false;
     token: string = randomUUID();
-    wishlist: any[] = [];
+    wishlists: Wishlist[] = [];
 
     /**
      * The following are all constructors for the User class
@@ -24,7 +25,7 @@ export default class User {
         this.address = address;
         if (token !== undefined) this.token = token;
         if (admin !== undefined) this.admin = admin;
-        if (wishlist !== undefined) this.wishlist = wishlist;
+        if (wishlist !== undefined) this.wishlists = wishlist;
     }
 
     static async fromUserAndPass(username: string, password: string) : Promise<any> {
@@ -40,30 +41,53 @@ export default class User {
     }
 
 
+    static async fromToken(token: string) : Promise<User | null> {
+        return new Promise((resolve) => {
+            users.findOne({
+                token: token,
+            }, (err: any, user: any) => {
+                if (err) resolve(null);
+                if (user === null) resolve(null);
+                resolve(new User(user.username, user.password, user.name, user.email, user.address, user.token, user.admin, user.wishlist));
+            });
+        });
+    }
+                
+
 
     /**
      * This is all for the wishlist here
      */
 
-
-    async addBookToList(book: Book) : Promise<boolean> {
-        //todo: add logic to add book to wishlist and then save it - for jeremy
-        return true; // return true if successful and false if not
+    async addBookToList(book: Book, name: string) : Promise<boolean> {
+        // find list withing user and then add it to that one
+        if (await this.save()) return true;
+        return false;
     }
 
-    async removeBookFromList(book: Book) : Promise<boolean> {
+    async removeBookFromList(book: Book, name: string) : Promise<boolean> {
+
+
+
         // todo: same but oposite as above - for jeremy
         return true; // return true if successful and false if not
     }
 
-    async getWishlist() : Promise<Book[]> {
+    async getWishlist(name: string, getBooks?: boolean) : Promise<Book[] | boolean | null> {
         let res = [];
-        for (let i = 0; i < this.wishlist.length; i++) {
-            let book = await Book.getBookByISBN(this.wishlist[i].ISBN);
-            if (book !== null) res.push(book);
+        for (let i = 0; i < this.wishlists.length; i++) {
+
+            const wishlist: Wishlist = this.wishlists[i];
+            if (wishlist.name !== name) continue;
+            if (getBooks !== undefined && getBooks === false) return true;
+            for (let j = 0; j < wishlist.books.length; j++) {
+                const book = await Book.getBookByISBN(wishlist.books[j].ISBN);
+                if (book !== null) res.push(book);
+            }
+            return res;
             // todo: maybe you can to remove the book from the wishlist if it doesn't exist anymore - for jeremy
         }
-        return res;
+        return getBooks === undefined ? false : null;
     }
 
 
@@ -85,6 +109,7 @@ export default class User {
         user.address = this.address;
         user.token = this.token;
         user.admin = this.admin;
+        user.wishlists = this.wishlists;
         
         // Save the book
         try {
