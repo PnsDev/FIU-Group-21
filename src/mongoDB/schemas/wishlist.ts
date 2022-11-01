@@ -2,7 +2,7 @@
 const mongoose = require("mongoose")
 const WishListSchema = new mongoose.Schema({    //creating instance of mongoose.schema class and defining the schema inside it
     Wish : {
-        name: String,
+        name: [String],
         required: true
     }
 })

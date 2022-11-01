@@ -8,7 +8,11 @@ const userProfile = new Schema({
     email: String,
     address: String, 
     token: String,
-    admin: Boolean
+    admin: Boolean,
+    wishlist:{
+        ISBN: [String],
+        required: true,
+    }
 });
 
 export default mongoose.model("user", userProfile);
