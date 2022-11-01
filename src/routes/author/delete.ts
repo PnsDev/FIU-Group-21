@@ -5,7 +5,7 @@ import Author from "../../types/author";
 import getAllBooksByAuthorID from "../../utils/authorUtils";
 
 export default async function reqHandler(req: Request, res: Response) : Promise<any> {
-    if (req.headers.authorization === undefined || !authChecker(req.headers.authorization)) 
+    if (req.headers.authorization === undefined || await !authChecker(req.headers.authorization)) 
         return res.status(401).send(response(false, 'Invalid authorization header'));
 
     if (req.query.ID === undefined)
