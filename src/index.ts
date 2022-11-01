@@ -38,7 +38,7 @@ async function startServer() {
             if (route === undefined) return process.stdout.write(`\r[${chalk.blueBright('SKIP')}] Skipped API route: ${pathName}`);
 
             // Create the route event and bind the request handler
-            expressApp.get(`${pathName}`, async (req: express.Request, res: express.Response) => {
+            expressApp.all(`${pathName}`, async (req: express.Request, res: express.Response) => {
                 try {
                     await route(req, res);
                 } catch (err) {
