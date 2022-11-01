@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import users from "../mongoDB/schemas/users";
+import Book from "./book";
 
 export default class User {
     username: string;
@@ -9,8 +10,13 @@ export default class User {
     address: string;
     admin: boolean = false;
     token: string = randomUUID();
+    wishlist: any[] = [];
 
-    private constructor(username: string, password: string, name: string, email: string, address: string, token?: string, admin?: boolean) {
+    /**
+     * The following are all constructors for the User class
+     */
+
+    private constructor(username: string, password: string, name: string, email: string, address: string, token?: string, admin?: boolean, wishlist?: any[]) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -18,10 +24,8 @@ export default class User {
         this.address = address;
         if (token !== undefined) this.token = token;
         if (admin !== undefined) this.admin = admin;
+        if (wishlist !== undefined) this.wishlist = wishlist;
     }
-
-
-
 
     static async fromUserAndPass(username: string, password: string) : Promise<any> {
         return new Promise((resolve) => {
@@ -33,6 +37,33 @@ export default class User {
                 // todo turn into user class
             });
         });
+    }
+
+
+
+    /**
+     * This is all for the wishlist here
+     */
+
+
+    async addBookToList(book: Book) : Promise<boolean> {
+        //todo: add logic to add book to wishlist and then save it - for jeremy
+        return true; // return true if successful and false if not
+    }
+
+    async removeBookFromList(book: Book) : Promise<boolean> {
+        // todo: same but oposite as above - for jeremy
+        return true; // return true if successful and false if not
+    }
+
+    async getWishlist() : Promise<Book[]> {
+        let res = [];
+        for (let i = 0; i < this.wishlist.length; i++) {
+            let book = await Book.getBookByISBN(this.wishlist[i].ISBN);
+            if (book !== null) res.push(book);
+            // todo: maybe you can to remove the book from the wishlist if it doesn't exist anymore - for jeremy
+        }
+        return res;
     }
 
 

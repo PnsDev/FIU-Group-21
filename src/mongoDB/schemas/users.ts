@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-const {Schema} = mongoose;
+import WishlistItem from "./wishListItem";
 
-const userProfile = new Schema({
+const userProfile = new mongoose.Schema({ 
     username: String,
     password: String,
     name: String,
@@ -9,10 +9,7 @@ const userProfile = new Schema({
     address: String, 
     token: String,
     admin: Boolean,
-    wishlist:{
-        ISBN: [String],
-        required: true,
-    }
+    wishlist: [WishlistItem]
 });
 
 export default mongoose.model("user", userProfile);
