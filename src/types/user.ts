@@ -65,11 +65,9 @@ export default class User {
     }
 
     async removeBookFromList(book: Book, name: string) : Promise<boolean> {
-
-
-
         // todo: same but oposite as above - for jeremy
-        return true; // return true if successful and false if not
+        if (await this.delete()) return true;
+        return false; // return true if successful and false if not
     }
 
     async getWishlist(name: string, getBooks?: boolean) : Promise<Book[] | boolean | null> {
@@ -85,6 +83,7 @@ export default class User {
             }
             return res;
             // todo: maybe you can to remove the book from the wishlist if it doesn't exist anymore - for jeremy
+            //if ();
         }
         return getBooks === undefined ? false : null;
     }
