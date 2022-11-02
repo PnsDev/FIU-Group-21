@@ -28,14 +28,14 @@ export default class User {
         if (wishlist !== undefined) this.wishlists = wishlist;
     }
 
-    static async fromUserAndPass(username: string, password: string) : Promise<any> {
+    static async fromUserAndPass(username: string, password: string) : Promise<User | null> {
         return new Promise((resolve) => {
             users.findOne({
                 username: username,
                 password: password,
-            }, (err: any, book: any) => {
-                resolve(true);
-                // todo turn into user class
+            }, (err: any, user: any) => {
+                if (err || user === null) return resolve(null);
+                resolve(new User(user.username, user.password, user.name, user.email, user.address, user.token, user.admin, user.wishlist));
             });
         });
     }
@@ -46,8 +46,7 @@ export default class User {
             users.findOne({
                 token: token,
             }, (err: any, user: any) => {
-                if (err) resolve(null);
-                if (user === null) resolve(null);
+                if (err || user === null) return; resolve(null);
                 resolve(new User(user.username, user.password, user.name, user.email, user.address, user.token, user.admin, user.wishlist));
             });
         });
@@ -91,10 +90,10 @@ export default class User {
     }
 
 
-    async generateNewToken() : Promise<string> {
+    async generateNewToken() : Promise<string | null> {
         this.token = randomUUID();
-        await this.save();
-        return this.token;
+        if (await this.save()) return this.token;
+        return null;
     }
 
     public async save() : Promise<boolean> { //TODO: add TS types

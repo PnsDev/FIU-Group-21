@@ -5,7 +5,7 @@ import { isEmpty } from "../../utils/classUtils";
 import response from "../../utils/response";
 
 export default async function(req: Request, res: Response): Promise<any> {
-    if (req.headers.authorization === undefined || await !authChecker(req.headers.authorization))
+    if (!(await authChecker(req.headers.authorization))) 
         return res.status(401).send(response(false, 'Invalid authorization header'));
 
     if (req.query.ID === undefined)
