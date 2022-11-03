@@ -22,7 +22,7 @@ export default async function(req: Request, res: Response) : Promise<any> {
     if (author === null) // Valid author body
         return res.status(400).send(response(false, 'Invalid author provided'));
 
-    if (await author.isAlreadyInDB()) // Make sure there are no dupes
+    if (await author.isAuthorAlreadyInDB()) // Make sure there are no dupes
         return res.status(400).send(response(false, 'Author has already been saved'));
 
     // Save the author
