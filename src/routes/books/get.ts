@@ -15,8 +15,5 @@ export default async function(req: Request, res: Response) : Promise<any> {
 
     const result = {success: true, book: book};
 
-    //TODO: get author info and inject into dummy object
-    // result.book.author = await Author.getAuthorByID(result.book.author); or something like that
-
     return res.status(200).send(JSON.stringify(result));
 };
