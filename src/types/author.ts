@@ -52,7 +52,7 @@ export default class Author {
      */
     public static async fromID(ID: String): Promise<Author | null> {
         let temp = await (new Author(ID, 'a', 'a', 'a', 'a')).findInDB();
-        return (temp == null ? null : new Author(temp.id, temp.name.first, temp.name.last, temp.biography, temp.publisher));
+        return (temp === null ? null : new Author(temp.id, temp.name.first, temp.name.last, temp.biography, temp.publisher));
     }
 
     /**
