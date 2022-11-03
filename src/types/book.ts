@@ -8,7 +8,9 @@ export default class Book {
     price: number;
     author: string;
     genre: string[];
-    [key: string]: any;
+    datePublished: Date;
+    [key: string]: any; // Used for easy updating
+
 
     static readonly fields: Map<string, string> = new Map([
         ['ISBN', 'string'],
@@ -16,47 +18,50 @@ export default class Book {
         ['description', 'string'],
         ['price', 'number'],
         ['author', 'string'],
-        ['genre', 'object']
+        ['genre', 'object'],
+        ['datePublished', 'date']
     ]);
 
-    private constructor(ISBN: string, name: string, description: string, price: number, author: string, genre: string[]) {
+    /**
+     * Creates a book object
+     * @param ISBN The ISBN of the book
+     * @param name The name of the book
+     * @param description The description of the book
+     * @param price The price of the book
+     * @param author The author of the book
+     * @param genre The genres of the book
+     * @param datePublished The date the book was published
+     */
+    private constructor(ISBN: string, name: string, description: string, price: number, author: string, genre: string[], datePublished: Date) {
         this.ISBN = ISBN;
         this.name = name;
         this.description = description;
         this.price = price;
         this.author = author;
         this.genre = genre;
+        this.datePublished = datePublished;
     }
 
     /**
-     * Create book with a valid provided Object
+     * Creates a book from a valid JSON object
+     * @param JSONAuthor The JSON object to convert to a Book object
+     * @returns The Book object if the JSON object is valid, null if not
      */
     public static fromJSON(JSONBook: any) : Book | null {
         if (!validateObjectValues(JSONBook, this.fields)) return null;
         if (!Array.isArray(JSONBook.genre)) return null;
 
-        return new Book(JSONBook['ISBN'], JSONBook['name'], JSONBook['description'], JSONBook['price'], JSONBook['author'], JSONBook['genre']);
+        return new Book(JSONBook['ISBN'], JSONBook['name'], JSONBook['description'], JSONBook['price'], JSONBook['author'], JSONBook['genre'], new Date(JSONBook['datePublished']));
     }
 
-
     /**
-     * Gets a book from the database by ISBN
+     * Creates a book from a valid ID stored in the database
+     * @param ISBN The ISBN of the book
+     * @returns The book if it exists in the database, null if not
      */
-     public static async getBookByISBN(ISBN: string) : Promise<Book | null> { //TODO: maybe clean this up
-        const book : Book = new Book(ISBN, "", "", 0, "", []);
-        const bookInDB = await book.findInDB();
-
-        if (bookInDB === null) return null;
-        return new Book(bookInDB.ISBN, bookInDB.name, bookInDB.description, bookInDB.price, bookInDB.author, bookInDB.genre);
-    }
-
-
-    /**
-     * Checks if the book exists in the database
-     */
-    public async inDatabase() : Promise<boolean> {
-        let book = await this.findInDB();
-        return book !== null;
+     public static async fromISBN(ISBN: string) : Promise<Book | null> { //TODO: maybe clean this up
+        let temp = await (new Book(ISBN, "", "", 0, "", [], new Date())).findInDB();
+        return (temp === null ? null : new Book(temp.ISBN, temp.name, temp.description, temp.price, temp.author, temp.genre, temp.datePublished));
     }
 
     /**
@@ -69,26 +74,24 @@ export default class Book {
         let book = await this.findInDB();
         if (book === null) book = new books();
 
-        // Update the book
+        // Update the book schema with the new values
         book.ISBN = this.ISBN;
         book.name = this.name;
         book.description = this.description;
         book.price = this.price;
-        book.author = this.author; //TODO: validate author 
+        book.author = this.author;
         book.genre = this.genre;
+        book.datePublished = this.datePublished;
 
-        // Save the book
-        try {
-            await book.save(); //todo error handling through callback
-            return true;
-        } catch (ex) {
-            return false;
-        }
+        try { // Save the book
+            await book.save(); 
+        } catch (ex) { return false; }
+        return true;
     }
 
     /**
      * Deletes the book from the database
-     * @returns true if successful, false if not
+     * @returns A boolean indicating if the author was deleted
      */
     public async delete() : Promise<boolean> {
         const book = await this.findInDB();
@@ -96,12 +99,18 @@ export default class Book {
 
         try {
             await book.delete();
-            return true;
-        } catch (ex) {
-            return false;
-        }
+        } catch (ex) { return false; }
+        return true;
     }
 
+    /**
+     * Checks if the book is stored in the database
+     * @returns true if the book is stored in the database, false if not
+     */
+     public async inDatabase() : Promise<boolean> {
+        let book = await this.findInDB();
+        return book !== null;
+    }
 
     /**
      * Finds the book in the database
