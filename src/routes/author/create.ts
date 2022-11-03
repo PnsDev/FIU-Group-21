@@ -2,12 +2,16 @@ import { randomUUID } from "crypto";
 import { Request, Response } from "express";
 import Author from "../../types/author";
 import authChecker from "../../utils/authChecker";
+import { isEmpty } from "../../utils/classUtils";
 import response from "../../utils/response";
 
 export default async function(req: Request, res: Response) : Promise<any> {
         
     if (req.headers.authorization === undefined || !authChecker(req.headers.authorization)) 
         return res.status(401).send(response(false, 'Invalid authorization header'));
+
+    if (isEmpty(req.body))
+        return res.status(400).send(response(false, 'No data provided'));
 
     // Generate a random ID for the author (or overwrite the one provided)
     req.body.id = randomUUID();

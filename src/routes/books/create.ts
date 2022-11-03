@@ -4,11 +4,15 @@ import response from "../../utils/response";
 
 import Book from "../../types/book";
 import Author from "../../types/author";
+import { isEmpty } from "../../utils/classUtils";
 
 export default async function(req: Request, res: Response) : Promise<any> {
     
     if (req.headers.authorization === undefined || !authChecker(req.headers.authorization)) 
         return res.status(401).send(response(false, 'Invalid authorization header'));
+
+    if (isEmpty(req.body))
+        return res.status(400).send(response(false, 'No data provided'));
     
     // Make a valid book object
     const book : Book | null = Book.fromJSON(req.body);

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Book from "../../types/book";
 import authChecker from "../../utils/authChecker";
-import { isEmpty } from "../../utils/classUtils";
+import { assureValidValues, isEmpty } from "../../utils/classUtils";
 import response from "../../utils/response";
 
 export default async function(req: Request, res: Response): Promise<any> {
@@ -13,6 +13,9 @@ export default async function(req: Request, res: Response): Promise<any> {
 
     if (isEmpty(req.body))
         return res.status(400).send(response(false, 'No data provided'));
+
+    if (!assureValidValues(req.body, Book.fields))
+        return res.status(400).send(response(false, 'Invalid data provided'));
     
     const book = await Book.getBookByISBN(req.query.ISBN as string);
     if (book == null) 
@@ -20,8 +23,12 @@ export default async function(req: Request, res: Response): Promise<any> {
 
     // Loop through the body and update the book
     for (const key in req.body) {
-        if (Book.fields.get(key) === undefined) continue;
-        book[key] = req.body[key];
+        let type = Book.fields.get(key);
+        if (type === undefined) continue;
+
+        // add the date type check here
+        if (type === 'date') book[key] = new Date(req.body[key]);
+        else book[key] = req.body[key];
     }
     
     if (await book.save()) return res.status(200).send(response(true, 'Book updated succesfully'));

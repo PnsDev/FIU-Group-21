@@ -8,6 +8,7 @@ export default class Book {
     price: number;
     author: string;
     genre: string[];
+    datePublished: Date;
     [key: string]: any;
 
     static readonly fields: Map<string, string> = new Map([
@@ -16,16 +17,18 @@ export default class Book {
         ['description', 'string'],
         ['price', 'number'],
         ['author', 'string'],
-        ['genre', 'object']
+        ['genre', 'object'],
+        ['datePublished', 'date']
     ]);
 
-    private constructor(ISBN: string, name: string, description: string, price: number, author: string, genre: string[]) {
+    private constructor(ISBN: string, name: string, description: string, price: number, author: string, genre: string[], datePublished: Date) {
         this.ISBN = ISBN;
         this.name = name;
         this.description = description;
         this.price = price;
         this.author = author;
         this.genre = genre;
+        this.datePublished = datePublished;
     }
 
     /**
@@ -35,7 +38,7 @@ export default class Book {
         if (!validateObjectValues(JSONBook, this.fields)) return null;
         if (!Array.isArray(JSONBook.genre)) return null;
 
-        return new Book(JSONBook['ISBN'], JSONBook['name'], JSONBook['description'], JSONBook['price'], JSONBook['author'], JSONBook['genre']);
+        return new Book(JSONBook['ISBN'], JSONBook['name'], JSONBook['description'], JSONBook['price'], JSONBook['author'], JSONBook['genre'], new Date(JSONBook['datePublished']));
     }
 
 
@@ -43,11 +46,11 @@ export default class Book {
      * Gets a book from the database by ISBN
      */
      public static async getBookByISBN(ISBN: string) : Promise<Book | null> { //TODO: maybe clean this up
-        const book : Book = new Book(ISBN, "", "", 0, "", []);
+        const book : Book = new Book(ISBN, "", "", 0, "", [], new Date());
         const bookInDB = await book.findInDB();
 
         if (bookInDB === null) return null;
-        return new Book(bookInDB.ISBN, bookInDB.name, bookInDB.description, bookInDB.price, bookInDB.author, bookInDB.genre);
+        return new Book(bookInDB.ISBN, bookInDB.name, bookInDB.description, bookInDB.price, bookInDB.author, bookInDB.genre, bookInDB.datePublished);
     }
 
 
@@ -76,6 +79,7 @@ export default class Book {
         book.price = this.price;
         book.author = this.author; //TODO: validate author 
         book.genre = this.genre;
+        book.datePublished = this.datePublished;
 
         // Save the book
         try {
