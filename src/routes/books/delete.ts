@@ -12,7 +12,7 @@ export default async function(req: Request, res: Response) : Promise<any> {
     if (req.query.ISBN === undefined) 
         return res.status(400).send(response(false, 'ISBN not provided'));
 
-    const book = await Book.getBookByISBN(req.query.ISBN as string);
+    const book = await Book.fromISBN(req.query.ISBN as string);
     if (book === null)
         return res.status(400).send(response(false, 'No match found for ISBN'));
 

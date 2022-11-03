@@ -17,7 +17,7 @@ export default async function(req: Request, res: Response): Promise<any> {
     if (!assureValidValues(req.body, Book.fields))
         return res.status(400).send(response(false, 'Invalid data provided'));
     
-    const book = await Book.getBookByISBN(req.query.ISBN as string);
+    const book = await Book.fromISBN(req.query.ISBN as string);
     if (book == null) 
         return res.status(404).send(response(false, 'No book found with that ISBN'));
 

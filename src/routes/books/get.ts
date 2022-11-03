@@ -9,7 +9,7 @@ export default async function(req: Request, res: Response) : Promise<any> {
     const ISBN = req.query.ISBN as string;
 
     // Make a valid book object
-    const book = await Book.getBookByISBN(ISBN);
+    const book = await Book.fromISBN(ISBN);
     if (book === null)
         return res.status(400).send(response(false, 'No match found for ISBN'));
 
