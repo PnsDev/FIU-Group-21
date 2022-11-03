@@ -4,8 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import chalk from 'chalk';
 
-import iterateDir from "./utils/folderDir";
-import response from './utils/response';
+import { apiResponse, iterateDir } from './utils/miscUtils';
 
 let expressApp: express.Application;
 let mongooseDb: mongoose.Mongoose;
@@ -42,7 +41,7 @@ async function startServer() {
                 try {
                     await route(req, res);
                 } catch (err) {
-                    res.status(500).send(response(false, 'Internal server error'));
+                    res.status(500).send(apiResponse(false, 'Internal server error'));
                     console.log(chalk.redBright('Error occured while handling request:\n') + err);
                 }
                 res.end();
