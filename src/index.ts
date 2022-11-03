@@ -17,6 +17,10 @@ async function startServer() {
     mongooseDb = await mongoose.connect(`mongodb+srv://${process.env.DB_USER !== undefined ? `${process.env.DB_USER}:${process.env.DB_PASSWORD}@` : ''}${process.env.DB_HOST}/bookstore`);
 
     expressApp.use(express.json()); // Parse JSON bodies
+    expressApp.use((err: any, req: any, res: any, next: any) => {
+        if (err) res.status(400).send(apiResponse(false, 'Error parsing JSON body'));
+        else next()
+    });
 
     /**
      * Iterate through the routes folder and import all the routes
