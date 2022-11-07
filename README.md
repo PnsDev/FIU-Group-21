@@ -1,7 +1,7 @@
 
 # Bookstore API
 
-Your avarage book store API to handle create and deleting books among other things.
+A bookstore backend complete with users, book, authors, authentication, and more!
 
 ## Run Locally
 
@@ -20,7 +20,7 @@ Your avarage book store API to handle create and deleting books among other thin
 3. Install dev dependencies
 
 ```bash
-  npm install -D
+  npm install
 ```
 
 4. Set enviroment variables
@@ -32,7 +32,7 @@ Look below or rename example.env
 5. Start the server in dev mode
 
 ```bash
-  npm run start
+  npm run dev
 ```
 
 OR
