@@ -78,7 +78,7 @@ export default class User {
             if (wishlist.name !== name) continue;
             if (getBooks !== undefined && getBooks === false) return true;
             for (let j = 0; j < wishlist.books.length; j++) {
-                const book = await Book.getBookByISBN(wishlist.books[j].ISBN);
+                const book = await Book.fromISBN(wishlist.books[j].ISBN);
                 if (book !== null) res.push(book);
             }
             return res;
