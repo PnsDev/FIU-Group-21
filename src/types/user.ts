@@ -1,5 +1,7 @@
 import { randomUUID } from "crypto";
 import users from "../mongoDB/schemas/users";
+import { Wishlist } from "../mongoDB/schemas/wishlist";
+import Book from "./book";
 
 export default class User {
     username: string;
@@ -9,12 +11,13 @@ export default class User {
     address: string;
     admin: boolean = false;
     token: string = randomUUID();
+    wishlists: Wishlist[] = [];
 
     /**
      * The following are all constructors for the User class
      */
 
-    private constructor(username: string, password: string, name: string, email: string, address: string, token?: string, admin?: boolean) {
+    private constructor(username: string, password: string, name: string, email: string, address: string, token?: string, admin?: boolean, wishlist?: any[]) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -22,6 +25,7 @@ export default class User {
         this.address = address;
         if (token !== undefined) this.token = token;
         if (admin !== undefined) this.admin = admin;
+        if (wishlist !== undefined) this.wishlists = wishlist;
     }
 
     static async fromUserAndPass(username: string, password: string) : Promise<User | null> {
@@ -31,7 +35,7 @@ export default class User {
                 password: password,
             }, (err: any, user: any) => {
                 if (err || user === null) return resolve(null);
-                resolve(new User(user.username, user.password, user.name, user.email, user.address, user.token, user.admin));
+                resolve(new User(user.username, user.password, user.name, user.email, user.address, user.token, user.admin, user.wishlist));
             });
         });
     }
@@ -43,10 +47,47 @@ export default class User {
                 token: token,
             }, (err: any, user: any) => {
                 if (err || user === null) return; resolve(null);
-                resolve(new User(user.username, user.password, user.name, user.email, user.address, user.token, user.admin));
+                resolve(new User(user.username, user.password, user.name, user.email, user.address, user.token, user.admin, user.wishlist));
             });
         });
     }
+                
+
+
+    /**
+     * This is all for the wishlist here
+     */
+
+    async addBookToList(book: Book, name: string) : Promise<boolean> {
+        // find list withing user and then add it to that one
+        if (await this.save()) return true;
+        return false;
+    }
+
+    async removeBookFromList(book: Book, name: string) : Promise<boolean> {
+        // todo: same but oposite as above - for jeremy
+        if (await this.delete()) return true;
+        return false; // return true if successful and false if not
+    }
+
+    async getWishlist(name: string, getBooks?: boolean) : Promise<Book[] | boolean | null> {
+        let res = [];
+        for (let i = 0; i < this.wishlists.length; i++) {
+
+            const wishlist: Wishlist = this.wishlists[i];
+            if (wishlist.name !== name) continue;
+            if (getBooks !== undefined && getBooks === false) return true;
+            for (let j = 0; j < wishlist.books.length; j++) {
+                const book = await Book.fromISBN(wishlist.books[j].ISBN);
+                if (book !== null) res.push(book);
+            }
+            return res;
+            // todo: maybe you can to remove the book from the wishlist if it doesn't exist anymore - for jeremy
+            //if ();
+        }
+        return getBooks === undefined ? false : null;
+    }
+
 
     async generateNewToken() : Promise<string | null> {
         this.token = randomUUID();
@@ -66,6 +107,7 @@ export default class User {
         user.address = this.address;
         user.token = this.token;
         user.admin = this.admin;
+        user.wishlists = this.wishlists;
         
         // Save the book
         try {

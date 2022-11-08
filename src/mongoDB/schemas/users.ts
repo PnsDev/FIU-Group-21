@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import wishlist from "./wishlist";
 
 const userProfile = new mongoose.Schema({ 
     username: String,
@@ -8,6 +9,7 @@ const userProfile = new mongoose.Schema({
     address: String, 
     token: String,
     admin: Boolean,
+    wishlists: [wishlist]
 });
 
 export default mongoose.model("user", userProfile);
