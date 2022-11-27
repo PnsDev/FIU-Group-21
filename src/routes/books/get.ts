@@ -9,9 +9,11 @@ export default async function(req: Request, res: Response) : Promise<any> {
     const ISBN = req.query.ISBN as string;
 
     // Make a valid book object
-    const book = await Book.fromISBN(ISBN);
+    let book = await Book.fromISBN(ISBN);
     if (book === null)
         return res.status(400).send(apiResponse(false, 'No match found for ISBN'));
+
+    book.copiesSold = 0; // due to no shopping cart system
 
     const result = {success: true, book: book};
 
