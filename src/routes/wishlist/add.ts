@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import Book from "../../types/book";
 import User from "../../types/user";
 import { apiResponse } from "../../utils/miscUtils";
+import authChecker from "../../utils/authChecker";
+import { isEmpty } from "../../utils/classUtils";
 
 export default async function(req: Request, res: Response) : Promise<any> {
 
@@ -13,6 +15,11 @@ export default async function(req: Request, res: Response) : Promise<any> {
 
     // header: authorization
     // 
+    if (!(await authChecker(req.headers.authorization))) 
+    return res.status(401).send(apiResponse(false, 'Invalid authorization header'));
+
+    if (isEmpty(req.body))
+    return res.status(400).send(apiResponse(false, 'No data provided'));
 
     if (req.headers.authorization === undefined) 
         return res.status(401).send(apiResponse(false, 'Invalid authorization header'));
