@@ -4,8 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import chalk from 'chalk';
 
-import iterateDir from "./utils/folderDir";
-import response from './utils/response';
+import { apiResponse, iterateDir } from './utils/miscUtils';
 
 let expressApp: express.Application;
 let mongooseDb: mongoose.Mongoose;
@@ -18,6 +17,10 @@ async function startServer() {
     mongooseDb = await mongoose.connect(`mongodb+srv://${process.env.DB_USER !== undefined ? `${process.env.DB_USER}:${process.env.DB_PASSWORD}@` : ''}${process.env.DB_HOST}/bookstore`);
 
     expressApp.use(express.json()); // Parse JSON bodies
+    expressApp.use((err: any, req: any, res: any, next: any) => {
+        if (err) res.status(400).send(apiResponse(false, 'Error parsing JSON body'));
+        else next()
+    });
 
     /**
      * Iterate through the routes folder and import all the routes
@@ -42,7 +45,7 @@ async function startServer() {
                 try {
                     await route(req, res);
                 } catch (err) {
-                    res.status(500).send(response(false, 'Internal server error'));
+                    res.status(500).send(apiResponse(false, 'Internal server error'));
                     console.log(chalk.redBright('Error occured while handling request:\n') + err);
                 }
                 res.end();

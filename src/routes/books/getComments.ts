@@ -1,23 +1,23 @@
 import { Request, Response } from "express";
-import response from "../../utils/response";
 
 import Book from "../../types/book";
 import Comment from "../../types/comment";
+import { apiResponse } from "../../utils/miscUtils";
 
 export default async function(req: Request, res: Response) : Promise<any> {
 
-    if (req.query.ISBN === undefined) return res.status(400).send(response(false, 'ISBN not provided'));
+    if (req.query.ISBN === undefined) return res.status(400).send(apiResponse(false, 'ISBN not provided'));
     const ISBN = req.query.ISBN as string;
 
     // Make a valid book object
-    const book = await Book.getBookByISBN(ISBN);
+    const book = await Book.fromISBN(ISBN);
     if (book === null)
-        return res.status(400).send(response(false, 'No match found for ISBN'));
+        return res.status(400).send(apiResponse(false, 'No match found for ISBN'));
     
     const comments = await Comment.getCommentsbyISBN(ISBN);
 
     if(comments === null)
-        return res.status(400).send(response(false, 'No comments found'));
+        return res.status(400).send(apiResponse(false, 'No comments found'));
 
     const result = {success: true, comments: comments};
 

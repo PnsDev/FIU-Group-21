@@ -9,6 +9,7 @@ const bookSchema = new Schema({
     author: String, // Author ID (Query user endpoint for data)
     genre: [String],
     publisher: String, // Publisher ID (Query publisher endpoint for data)
+    datePublished: Date,
 });
 
 
